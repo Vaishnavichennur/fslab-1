@@ -7,106 +7,142 @@
 //============================================================================
 
 #include<iostream>
-#include<string>
-#include<fstream>
+#include<iostream>
+#include<string.h>
 #include<stdlib.h>
+#include<fstream>
+#include<sstream>
+#include<sys/types.h>
+#include<unistd.h>
 using namespace std;
-class matching
+#define max 20
+class seqo
 {
-  public:
-  fstream f1,f2;
-  string l1[100];
-  string l2[100];
-  int c1,c2;
-  string buf;
-  void load();
-  void sort();
-  void match();
+    string l1[max];
+    string l2[max];
+public:
+    int c1;
+    int c2;
+    void load(char flname[max],char flname1[max]);
+    void sort();
+    void match();
 };
-
-void matching::load(){
-		c1=0,c2=0;	
-		cout<<"\nwelcome1\n";		
-		f1.open("d1.txt",ios::in);
-		while(!f1.eof())
-		{
-			getline(f1,buf);
-			//cout<<buf;
-			l1[c1++]=buf;
-		}
-		f2.open("d2.txt",ios::in);
-		while(!f2.eof())
-		{
-			getline(f2,buf);
-			//cout<<buf;
-			l2[c2++]=buf;
-		}
-      }
-
-
-void matching::sort(){
-			cout<<"welcome2\n";
-			string temp;
-			for(int i=0;i<c1;i++)
-			{
-				for(int j=i+1;j<c1;j++)
-				{
-					if(l1[i]>l1[j])
-					{
-						temp=l1[i];
-						l1[i]=l1[j];
-						l1[j]=temp;
-					}
-				}
-			}
-			
-			for(int i=0;i<c1;i++)
-		cout<<l1[i]<<endl;
-			for(int i=0;i<c2;i++)
-			{
-				for(int j=i+1;j<c2;j++)
-				{
-					if(l2[i]>l2[j])
-					{
-						temp=l2[i];
-						l2[i]=l2[j];
-						l2[j]=temp;
-					}
-				}
-			}
-		for(int i=0;i<c2;i++)
-		cout<<l2[i]<<endl;
-     }
-
-void matching::match()
+void seqo :: load(char flname[max],char flname1[max])
+{
+    int i=0;
+    c1=0;c2=0;
+    fstream fp1,fp2;
+    string buffer;
+    fp1.open(flname,ios::in);
+    fp2.open(flname1,ios::in);
+   // cout<<"opened file"<<endl;
+    while(!fp1.eof())
+    {
+        //cout<<"*";
+        getline(fp1,buffer);
+        l1[i]=buffer;
+        i++;
+        c1++;   
+    }
+    cout<<endl;
+    i=0;
+    while(!fp2.eof())
+    {
+       // cout<<"@";
+        getline(fp2,buffer);
+        l2[i]=buffer;
+        i++;
+        c2++;   
+    }
+   /*cout<<"value of c1 and c2 is:"<<c1<<endl<<c2<<endl;
+    cout<<endl;
+    cout<<"closed file"<<endl;*/
+     cout<<"content of l1:"<<endl;
+    for(i=0;i<c1;i++)
+        cout<<l1[i]<<endl;
+     cout<<"content of l2"<<endl;
+    for(i=0;i<c2;i++)
+        cout<<l2[i]<<endl;
+    fp1.close();
+    fp2.close();
+}
+void seqo :: sort()
+{
+    string temp;
+    int i=0,j=0;
+    for(i=0;i<c1;i++)
+    {
+     for(j=i+1;j<c1;j++)
+        {
+           if(l1[i]>l1[j])
+           {
+               temp=l1[i];
+               l1[i]=l1[j];
+               l1[j]=temp;
+           }
+        }    
+    }
+    for(i=0;i<c2;i++)
+    {
+     for(j=i+1;j<c2;j++)
+        {
+           if(l2[i]>l2[j])
+           {
+               temp=l2[i];
+               l2[i]=l2[j];
+               l2[j]=temp;
+           }
+        }    
+    }
+   cout<<"new content of l1:"<<endl;
+    for(i=0;i<c1;i++)
+        cout<<l1[i]<<endl;
+    cout<<"new content of l2"<<endl;
+    for(i=0;i<c2;i++)
+        cout<<l2[i]<<endl;
+}
+void seqo :: match()
+{
+     cout<<"matching records are :"<<endl;
+    int i=0,j=0,k=0;
+  while(i<c1 && j<c2)
 	{
-		int count=0,i,j;
-		cout<<"welcome3\n";
-	
-			for(i=0;i<c1;i++)
-			{
-				for(j=0;j<c2;j++)
-				{
-					if(l1[i]==l2[j])
-					{
-						cout<<l1[i]<<endl;
-					}
-				}				
-			}
-			
-			
+		if(l1[i]==l2[j])
+		{
+			cout<<l1[i]<<endl;
+			i++;
+			j++;	
 		}
-		//cout<<"the total number of strings matched are:"<<count<<endl;
-	
-
+		if(l1[i]<l2[j])
+		{
+			i++;
+			continue;
+		}
+		if(l1[i]>l2[j])
+		{
+			j++;
+			continue;
+		}
+	}
+		
+}
 int main()
 {
-	cout<<"welcome\n";
- matching m;
- m.load();
- m.sort();
- m.match();
- return 0;
+    int c1=0,c2=0;
+    char fn1[max],fn2[max];
+    cout<<"enter the first filename :";
+    cin>>fn1;
+    cout<<endl;
+    cout<<"enter the second filename :";
+    cin>>fn2;
+    cout<<endl;
+    seqo s;
+   // cout<<"before loading"<<endl;
+    s.load(fn1,fn2);
+    //cout<<"done loading"<<endl;
+    s.sort();
+    //cout<<"done sorting"<<endl;
+    s.match();
+    cout<<"program terminated"<<endl;
 }
-
     
